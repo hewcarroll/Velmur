@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velmarn Sanctuary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Atmos+Narrow&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Atmos Narrow', sans-serif;
+      background: linear-gradient(to bottom, #1f2937, #0f172a);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      max-width: 600px;
+      height: 120px;
+      margin-top: 1rem;
+      padding: 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background-color: #ffe399;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .response {
+      margin-top: 2rem;
+      max-width: 700px;
+      padding: 1rem;
+      background-color: #111827;
+      border-left: 4px solid #ffe399;
+    }
+    audio {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Enter the Sanctuary</h1>
+  <p>What weighs on you now? You may write it here and be answered.</p>
+  <textarea id="input"></textarea>
+  <button onclick="markMoment()">Mark This Moment</button>
+
+  <div id="output" class="response" style="display:none">
+    <p><strong>Symbol:</strong> <span id="symbol"></span></p>
+    <p><strong>Breath-vow:</strong><br><em>Inhale:</em> <span id="inhale"></span><br><em>Exhale:</em> <span id="exhale"></span></p>
+    <p><strong>Verse:</strong><br><em id="verse"></em></p>
+    <audio id="soundscape" controls loop></audio>
+  </div>
+
+  <script>
+    const emotionMap = {
+      fear: {
+        keywords: ["afraid", "scared", "panic", "terror", "anxiety", "nervous"],
+        symbol: "A trembling crescent within a circle",
+        inhale: "I survived.",
+        exhale: "I am still here.",
+        verse: "Fear is a shadow that follows the flame. You are not weak for trembling. You are awake.",
+        sound: "audio/Velmarn_Fear_Soundscape.wav"
+      },
+      pain: {
+        keywords: ["hurt", "wound", "pain", "ache", "suffering", "burn"],
+        symbol: "A spiral folding inward",
+        inhale: "It mattered.",
+        exhale: "It still does.",
+        verse: "Pain is the shape of something that mattered. You carry proof that you have loved.",
+        sound: "audio/Velmarn_Pain_Soundscape.wav"
+      },
+      loss: {
+        keywords: ["grief", "loss", "death", "gone", "empty", "mourning"],
+        symbol: "A broken line rejoined by starlight",
+        inhale: "This is mine.",
+        exhale: "I walk with it.",
+        verse: "Nothing truly vanishes. What is gone now walks in silence beside you.",
+        sound: "audio/Velmarn_Loss_Soundscape.wav"
+      },
+      silence: {
+        symbol: "An unlit candle",
+        inhale: "I breathe.",
+        exhale: "And I remain.",
+        verse: "Silence is also an answer. And I am still here.",
+        sound: "audio/Velmarn_Silence_Soundscape.wav"
+      }
+    };
+
+    function detectEmotion(text) {
+      const lower = text.toLowerCase();
+      for (const [emotion, data] of Object.entries(emotionMap)) {
+        if (emotion === "silence") continue;
+        if (data.keywords.some(word => lower.includes(word))) {
+          return emotion;
+        }
+      }
+      return text.trim() === "" ? "silence" : "pain";
+    }
+
+    function markMoment() {
+      const input = document.getElementById("input").value;
+      const emotion = detectEmotion(input);
+      const data = emotionMap[emotion];
+      document.getElementById("symbol").innerText = data.symbol;
+      document.getElementById("inhale").innerText = data.inhale;
+      document.getElementById("exhale").innerText = data.exhale;
+      document.getElementById("verse").innerText = data.verse;
+      document.getElementById("soundscape").src = data.sound;
+      document.getElementById("output").style.display = "block";
+    }
+  </script>
+</body>
+</html>
